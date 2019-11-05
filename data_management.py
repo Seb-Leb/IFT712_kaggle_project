@@ -1,6 +1,10 @@
 import numpy
 
 def parse_csv(file_path):
+    '''
+    in: path to csv file
+    out: list of dicts containing the data
+    '''
     with open(file_path, 'r') as f:
         for n,l in enumerate(f):
             ls = l.strip().split(',')
