@@ -1,3 +1,4 @@
+import numpy
 
 def parse_csv(file_path):
     with open(file_path, 'r') as f:
