@@ -12,3 +12,7 @@ def parse_csv(file_path):
                     line[k] = float(line[k])
             data.append(line)
     return data
+
+def select_training_set():
+    pass
+
