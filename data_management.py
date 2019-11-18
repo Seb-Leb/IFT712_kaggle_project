@@ -18,6 +18,6 @@ def parse_csv(file_path):
             data.append(line)
     return data
 
-def select_training_set():
-    pass
+def split_traning_test():
+    return x_train, t_train, x_test, t_test
 
