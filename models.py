@@ -1,4 +1,5 @@
-from sklearn import svm, neural_network
+from sklearn import svm
+from sklearn.neural_network import MLPClassifier
 import numpy as np
 
 class Model:
@@ -25,9 +26,10 @@ class Model:
         # mlp = MLPClassifier(hidden_layer_sizes=(100, 100), max_iter=400, alpha=1e-4,
         #                     solver='sgd', verbose=10, tol=1e-4, random_state=1)
         if self.model == 'MLP':
-            mlp = neural_network.MLPClassifier(
+            mlp = MLPClassifier(
                     hidden_layer_sizes=(self.n_layers, *self.n_neuron_per_layer),
                     )
+            self.trained_model = mlp.fit(x_train, t_train)
 
     def predict(self, x):
         pass
