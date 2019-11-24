@@ -2,11 +2,12 @@ from sklearn import svm, neural_network
 import numpy as np
 
 class Model:
-    def __int__(self, model_type, gamma='scale'):
+    def __int__(self, model_type, alpha=1e-4, gamma='scale'):
         '''
         instantiate an ML model (SVM_rbf, SVM_sigmoid, MLP, ***, ***)
         '''
         self.model = model_type
+        self.alpha = alpha
         self.gamma = gamma
 
     def train(self, x_train, t_train):
@@ -25,11 +26,14 @@ class Model:
         #                     solver='sgd', verbose=10, tol=1e-4, random_state=1)
         if self.model == 'MLP':
             mlp = neural_network.MLPClassifier(
-                    hidden_layer_sizes=(self.n_layers,),
+                    hidden_layer_sizes=(self.n_layers, *self.n_neuron_per_layer),
                     )
 
     def predict(self, x):
         pass
+
+    def error(self, predicted_t, real_t):
+        return (predicted_t - real_t)**2
 
     def hyperpar_tuning():
         '''
@@ -39,6 +43,7 @@ class Model:
             '''
 
             '''
+            pass
         pass
 
     def bagging():
