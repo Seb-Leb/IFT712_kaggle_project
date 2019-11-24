@@ -39,4 +39,3 @@ class data_manager:
     def get_data(self):
         data = self.parse_csv(self.dataset_path)
         return self.split_trainning_test(data)
-
