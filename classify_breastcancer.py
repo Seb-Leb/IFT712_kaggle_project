@@ -9,5 +9,7 @@ args = parser.parse_args()
 
 
 if __name__ == "__main__":
-
-    print(args.data_file)
+    fpath = args.data_file
+    data_manager = DataManager(fpath)
+    x_train, t_train, x_test, t_test = data_manager.get_data()
+    print(x_train.shape, t_train.shape)
