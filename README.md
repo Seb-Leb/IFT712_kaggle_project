@@ -1,5 +1,7 @@
-# IFT712_kaggle_project
-Jérémie Béliveau-Lefebvre and Sebastien Leblanc's repo for Usherbrooke IFT712 term project - Fall 2019
+# IFT712_kaggle_project - Fall 2019
+# Jérémie Béliveau-Lefebvre 04494470
+# Sebastien Leblanc 18206273
+# Team repo for Usherbrooke IFT712 term project - Fall 2019
 
 
 The present document has an objective of guidance for the reader on the design 
@@ -42,10 +44,7 @@ Data gathering :
 - do we join a file and read data from it
 - or do we import them directly from kaggle.com #is kaggle api needed?
 
-
-
-
-
-
+Show analysis :
+ - do model combination to find the best result
 
 
