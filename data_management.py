@@ -33,10 +33,19 @@ class DataManager:
         T = np.array([1. if x['diagnosis']=='M' else 0. for x in data])
         return X, T
 
-    def split_training_test(self, X, T):
+    def split_training_test(self, X, T, norm=False):
+        if norm:
+            X = self.normalize(X)
         x_train, x_test, t_train, t_test = train_test_split(X, T, test_size=self.test_size)
         return x_train, t_train, x_test, t_test
 
-    def get_data(self):
-        data = self.parse_csv()
-        return self.split_training_test(*data)
+    def normalize(self, X):
+        '''
+        Function to scale feature between -1 and 1.
+        input: feature matrix (2d np array)
+        output: scaled feature matrix (2d np array)
+        '''
+        n = (X-X.min(axis=0))*2
+        d = X.max(axis=0) - X.min(axis=0)
+        d[d==0] = 1
+        return -1 + n/d
