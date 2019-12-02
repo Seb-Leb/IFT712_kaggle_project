@@ -1,8 +1,8 @@
-import numpy
+import numpy as np
 from sklearn.model_selection import train_test_split
 
 
-class data_manager:
+class DataManager:
     def __init__(self, dataset_path, test_size=0.3):
         '''
         dataset path: relative path to the data.csv file from the winsconsin breast cancer dataset.
@@ -11,17 +11,18 @@ class data_manager:
         self.dataset_path = dataset_path
         self.test_size = test_size
 
-    def parse_csv(file_path):
+    def parse_csv(self):
         '''
         Fonction that parses the data.csv file
         in: path to csv file
         out: list of dicts containing the data
         '''
-        with open(file_path, 'r') as f:
+        data = []
+        with open(self.dataset_path, 'r') as f:
             for n,l in enumerate(f):
                 ls = l.strip().split(',')
                 if n==0:
-                    keys = ls
+                    keys = [x.strip('"') for x in ls]
                     continue
                 line = dict(zip(keys, ls))
                 for k in line.keys():
@@ -32,10 +33,10 @@ class data_manager:
         T = np.array([1. if x['diagnosis']=='M' else 0. for x in data])
         return X, T
 
-    def split_traning_test(self, X, T):
+    def split_training_test(self, X, T):
         x_train, x_test, t_train, t_test = train_test_split(X, T, test_size=self.test_size)
         return x_train, t_train, x_test, t_test
 
     def get_data(self):
-        data = self.parse_csv(self.dataset_path)
-        return self.split_trainning_test(data)
+        data = self.parse_csv()
+        return self.split_training_test(*data)
