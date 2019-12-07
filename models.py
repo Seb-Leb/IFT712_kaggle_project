@@ -30,7 +30,7 @@ class Model:
             self.trained_model = mlp.fit(x_train, t_train)
 
     def predict(self, x):
-        pass
+        return self.trained_model.predict(x)
 
     def polynomial_basis_fun(self, X):
         '''
