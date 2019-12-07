@@ -23,8 +23,6 @@ class Model:
             self.trained_model = clf.fit(x_train, t_train)
 
         # Multi layer perceptron
-        # mlp = MLPClassifier(hidden_layer_sizes=(100, 100), max_iter=400, alpha=1e-4,
-        #                     solver='sgd', verbose=10, tol=1e-4, random_state=1)
         if self.model == 'MLP':
             mlp = MLPClassifier(
                     hidden_layer_sizes=(self.n_layers, *self.n_neuron_per_layer),
@@ -33,6 +31,16 @@ class Model:
 
     def predict(self, x):
         pass
+
+    def polynomial_basis_fun(self, X):
+        '''
+        prodect data into a higher dimentional space.
+        :input: X ndarray
+        '''
+        phi_X = X
+        for m in range(1, self.M):
+            phi_X = np.concatenate((phi_X, X**m), axis=1)
+        return phi_X
 
     def error(self, predicted_t, real_t):
         return (predicted_t - real_t)**2
