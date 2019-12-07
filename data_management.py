@@ -1,3 +1,4 @@
+import pickle
 import numpy as np
 from sklearn.model_selection import train_test_split
 
@@ -11,31 +12,20 @@ class DataManager:
         self.dataset_path = dataset_path
         self.test_size = test_size
 
-    def parse_csv(self):
+    def parse_pickle(self, normalize=False):
         '''
         Fonction that parses the data.csv file
-        in: path to csv file
+        in: path to pickle file
         out: list of dicts containing the data
         '''
-        data = []
-        with open(self.dataset_path, 'r') as f:
-            for n,l in enumerate(f):
-                ls = l.strip().split(',')
-                if n==0:
-                    keys = [x.strip('"') for x in ls]
-                    continue
-                line = dict(zip(keys, ls))
-                for k in line.keys():
-                    if k not in ('id', 'diagnosis'):
-                        line[k] = float(line[k])
-                data.append(line)
-        X = np.array([[v for k,v in x.items() if k not in {'id', 'diagnosis'}] for x in data])
-        T = np.array([1. if x['diagnosis']=='M' else 0. for x in data])
-        return X, T
+        P, U = pickle.load(open(self.dataset_path, 'rb'))
+        P_names = [p[0] for p in P]
+        U_names = [u[0] for u in U]
+        P = np.array([p[-1] for p in P])
+        U = np.array([u[-1] for u in U])
+        return P, U, P_names, U_names
 
-    def split_training_test(self, X, T, norm=False):
-        if norm:
-            X = self.normalize(X)
+    def split_training_test(self, X, T, normalize=False):
         x_train, x_test, t_train, t_test = train_test_split(X, T, test_size=self.test_size)
         return x_train, t_train, x_test, t_test
 
