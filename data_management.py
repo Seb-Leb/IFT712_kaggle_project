@@ -12,7 +12,7 @@ class DataManager:
         self.dataset_path = dataset_path
         self.test_size = test_size
 
-    def parse_pickle(self, normalize=False):
+    def parse_pickle(self):
         '''
         Fonction that parses the data.csv file
         in: path to pickle file
@@ -25,8 +25,21 @@ class DataManager:
         U = np.array([u[-1] for u in U])
         return P, U, P_names, U_names
 
-    def split_training_test(self, X, T, normalize=False):
-        x_train, x_test, t_train, t_test = train_test_split(X, T, test_size=self.test_size)
+    def split_training_test(self, P, U, test_size=0.3, PU_ratio=0.5, normalize=False):
+        if normalize:
+            len_p  = len(P)
+            X_norm = self.normalize(np.concatenate((P, U), axis=0))
+            P = X_norm[:len_p]
+            U = X_norm[len_p:]
+        p_train, p_test, _, _ = train_test_split(P, np.array([1.,]*len(P)), test_size=test_size)
+        nU = int(len(p_train)*PU_ratio)
+        u_train, u_test, _, _ = train_test_split(U, np.array([0.,]*len(U)), test_size=nU)
+
+        x_train = np.concatenate((p_train, u_train), axis=0)
+        x_test  = np.concatenate((p_test, u_test), axis=0)
+        t_train = np.concatenate((np.array([1.,]*len(p_train)), np.array([0.,]*len(u_train))), axis=0)
+        t_test  = np.concatenate((np.array([1.,]*len(p_test )), np.array([0.,]*len(u_test ))), axis=0)
+
         return x_train, t_train, x_test, t_test
 
     def normalize(self, X):

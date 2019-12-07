@@ -3,7 +3,7 @@ from sklearn.neural_network import MLPClassifier
 import numpy as np
 
 class Model:
-    def __int__(self, model_type, alpha=1e-4, gamma='scale'):
+    def __init__(self, model_type, alpha=1e-4, gamma='scale'):
         '''
         instantiate an ML model (SVM_rbf, SVM_sigmoid, MLP, ***, ***)
         '''
