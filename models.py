@@ -3,13 +3,14 @@ from sklearn.neural_network import MLPClassifier
 import numpy as np
 
 class Model:
-    def __init__(self, model_type, alpha=1e-4, gamma='scale'):
+    def __init__(self, model_type, alpha=1e-4, gamma='scale', neuron_per_layer=(20,20)):
         '''
         instantiate an ML model (SVM_rbf, SVM_sigmoid, MLP, ***, ***)
         '''
         self.model = model_type
         self.alpha = alpha
         self.gamma = gamma
+        self.neuron_per_layer = neuron_per_layer
 
     def train(self, x_train, t_train):
         # SVM RBF kernel
@@ -24,10 +25,10 @@ class Model:
 
         # Multi layer perceptron
         if self.model == 'MLP':
-            mlp = MLPClassifier(
-                    hidden_layer_sizes=(self.n_layers, *self.n_neuron_per_layer),
+            clf = MLPClassifier(
+                    hidden_layer_sizes=(self.neuron_per_layer),
                     )
-            self.trained_model = mlp.fit(x_train, t_train)
+            self.trained_model = clf.fit(x_train, t_train)
 
     def predict(self, x):
         return self.trained_model.predict(x)
