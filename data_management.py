@@ -32,8 +32,8 @@ class DataManager:
             P = X_norm[:len_p]
             U = X_norm[len_p:]
         p_train, p_test, _, _ = train_test_split(P, np.array([1.,]*len(P)), test_size=test_size)
-        nU = int(len(p_train)*PU_ratio)
-        u_train, u_test, _, _ = train_test_split(U, np.array([0.,]*len(U)), test_size=nU)
+        nU = int(len(p_train)*(1+PU_ratio))
+        u_train, u_test, _, _ = train_test_split(U, np.array([0.,]*len(U)), train_size=nU)
 
         x_train = np.concatenate((p_train, u_train), axis=0)
         x_test  = np.concatenate((p_test, u_test), axis=0)
