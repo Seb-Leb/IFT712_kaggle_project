@@ -33,11 +33,7 @@ class DataManager:
             U = X_norm[len_p:]
 
         p_train, p_test, _, _ = train_test_split(P, np.array([1.,]*len(P)), test_size=test_size)
-<<<<<<< HEAD
-        nU = int(len(p_train)*(1+PU_ratio))
-=======
         nU = int(len(p_train)*PU_ratio)
->>>>>>> data_management
         u_train, u_test, _, _ = train_test_split(U, np.array([0.,]*len(U)), train_size=nU)
 
         x_train = np.concatenate((p_train, u_train), axis=0)
