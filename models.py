@@ -3,16 +3,24 @@ from sklearn.neural_network import MLPClassifier
 import numpy as np
 
 class Model:
-    def __init__(self, model_type, alpha=1e-4, gamma='scale', neuron_per_layer=(20,20)):
+    def __init__(self, model_type, niter=1000, C=1., M=20, alpha=1e-4, gamma='scale', neuron_per_layer=(20,20)):
         '''
         instantiate an ML model (SVM_rbf, SVM_sigmoid, MLP, ***, ***)
         '''
         self.model = model_type
+        self.M     = M
+        self.niter = niter
+        self.C     = C
         self.alpha = alpha
         self.gamma = gamma
         self.neuron_per_layer = neuron_per_layer
 
     def train(self, x_train, t_train):
+        # Linear Classifier
+        if self.model == 'linear':
+            clf = svm.LinearSVC(penalty='l2', C=self.C, max_iter=self.niter)
+            self.trained_model = clf.fit(x_train, t_train)
+
         # SVM RBF kernel
         if self.model == 'svm_rbf':
             clf = svm.SVC(gamma=self.gamma, kernel='rbf')
