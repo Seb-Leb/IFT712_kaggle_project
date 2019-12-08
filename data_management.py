@@ -25,20 +25,28 @@ class DataManager:
         U = np.array([u[-1] for u in U])
         return P, U, P_names, U_names
 
-    def split_training_test(self, P, U, test_size=0.3, PU_ratio=0.5, normalize=False):
+    def split_training_test(self, P, U, test_size=0.3, PU_ratio=0.5, normalize=False, show_counts=False):
         if normalize:
             len_p  = len(P)
             X_norm = self.normalize(np.concatenate((P, U), axis=0))
             P = X_norm[:len_p]
             U = X_norm[len_p:]
+
         p_train, p_test, _, _ = train_test_split(P, np.array([1.,]*len(P)), test_size=test_size)
+<<<<<<< HEAD
         nU = int(len(p_train)*(1+PU_ratio))
+=======
+        nU = int(len(p_train)*PU_ratio)
+>>>>>>> data_management
         u_train, u_test, _, _ = train_test_split(U, np.array([0.,]*len(U)), train_size=nU)
 
         x_train = np.concatenate((p_train, u_train), axis=0)
         x_test  = np.concatenate((p_test, u_test), axis=0)
         t_train = np.concatenate((np.array([1.,]*len(p_train)), np.array([0.,]*len(u_train))), axis=0)
         t_test  = np.concatenate((np.array([1.,]*len(p_test )), np.array([0.,]*len(u_test ))), axis=0)
+
+        if show_counts:
+            print('len P_train: {}\nlen P_test: {}\nlen U_train: {}\nlen U_test: {}\n nP/nU: {}\nlen x_train: {}\nlen x_test: {}\nnTest/total'.format(len(p_train), len(p_test), len(u_train), len(u_test), len(p_train)/len(u_train), len(x_train), len(x_test)), len(x_test)/(len(x_train)+len(x_test)))
 
         return x_train, t_train, x_test, t_test
 
