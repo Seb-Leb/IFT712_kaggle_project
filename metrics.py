@@ -14,5 +14,5 @@ class Metrics :
 
 
     def recall(self, t_pred, t_test):
-        return sum(t_pred==t_test and t_pred==1.)/sum(t_test==1.)
+        return sum(t_pred[t_pred==t_test]==1.)/sum(t_test==1.)
 
