@@ -1,5 +1,7 @@
+import itertools as itt
 from sklearn import svm
 from sklearn.neural_network import MLPClassifier
+from sklearn.model_selection import StratifiedKFold
 import numpy as np
 
 class Model:
@@ -52,17 +54,43 @@ class Model:
         return phi_X
 
     def error(self, predicted_t, real_t):
+        '''
+        Error calculation on the positive trainning labels.
+        '''
         return (predicted_t - real_t)**2
 
-    def hyperpar_tuning():
+    def hyperpar_tuning(self, x_train, t_train, hyperpar_ranges, search_method='grid'):
+        '''
+        Hyper parameter search with k-fold cross validation.
+        '''
+
+        hyperpar_sets = itt.product()
+        hyperpar_tests = dict()
+        for hyperpar_set in hyperpar_sets:
+            score = cross_val(x_val, t_val, hyperpar_set)
+            hyperpar_tests[score] = hyperpar_set
+
+        best_hyperpars = hyperpar_tests[max(hyperpar_tests.keys())]
+
+        return best_hyperpars
+
+    def kfold_cross_val(self, x_train, t_train, k=5):
         '''
 
         '''
-        def cross_val():
-            '''
+        skf  = StratifiedKFold(n_splits=k)
+        errs = []
+        for train_idx, test_idx in skf.split(x_train, t_train):
+            x_tr, t_tr = x_train[train_idx], t_train[train_idx]
+            x_ts, t_ts = x_train[test_idx], t_train[test_idx]
+            self.train(x_tr, t_tr)
+            t_pred = self.predict(x_ts, t_ts)
+            errs.append(self.error(t_s, t_pred))
+        return np.mean(errs)
 
-            '''
-            pass
+
+class Ensemble:
+    def __init__(self):
         pass
 
     def bagging():
