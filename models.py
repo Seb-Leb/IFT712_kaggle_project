@@ -101,7 +101,7 @@ class Model:
             x_ts, t_ts = x_train[test_idx], t_train[test_idx]
             self.train(x_tr, t_tr)
             t_pred = self.predict(x_ts)
-            scores.append(metric.recall(t_s, t_pred))
+            scores.append(metric.recall(t_ts, t_pred))
         return np.mean(scores)
 
 
