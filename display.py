@@ -19,6 +19,18 @@ class FigureDrawer:
     def draw_line_plot(self, curves):
         plt.show()
 
-    def draw_scatter_plot(self, points, colors):
-        plt.scatter(points[:,0], points[:,1], c=colors)
+    def draw_scatter_plot(self, points, labels, figsize):
+        '''
+        points is a tuble of 2d arrays.
+        '''
+        if len(points)>3:
+            grid = int(np.sqrt(len(points)))
+            fig, axs = plt.subplots(grid, grid, facecolor='w')
+
+        fig, axs = plt.subplots(1, len(points), facecolor='w', figsize=figsize)
+        axs = axs.ravel()
+        for n,x in enumerate(points):
+            axs[n].set_title(labels[n])
+            axs[n].scatter(x[:,0], x[:,1], c=x[:,2], alpha=0.8, s=1.)
+        plt.tight_layout()
         plt.show()

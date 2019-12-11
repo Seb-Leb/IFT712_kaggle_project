@@ -22,6 +22,7 @@ class Model:
         elif self.model == 'SVM':
             hyperpars       = {'C':1., 'alpha':1e-4, 'gamma':'scale', 'kernel':'rbf'}
             hyperpar_ranges = {'C':1., 'alpha':1e-4, 'gamma':'scale', 'kernel':'rbf'}
+
             if 'kernel' in kwargs:
                 hyperpars['kernel'] = kwargs['kernel']
         elif self.model == 'MLP':
@@ -101,7 +102,7 @@ class Model:
             x_ts, t_ts = x_train[test_idx], t_train[test_idx]
             self.train(x_tr, t_tr)
             t_pred = self.predict(x_ts)
-            scores.append(metric.recall(t_ts, t_pred))
+            scores.append(metric.LL_score(t_ts, t_pred))
         return np.mean(scores)
 
 
