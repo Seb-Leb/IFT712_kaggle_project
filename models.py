@@ -22,15 +22,17 @@ class Model:
         elif self.model == 'SVM':
             hyperpars       = {'C':1., 'alpha':1e-4, 'gamma':'scale', 'kernel':'rbf'}
             hyperpar_ranges = {
-                    'C':1.,
-                    'alpha':1e-4,
-                    'gamma':'scale',
+                    'C':range(1,4),
+                    'gamma':1/np.logspace(np.log10(1e-9), np.log10(2), 5),
                     }
             if 'kernel' in kwargs:
                 hyperpars['kernel'] = kwargs['kernel']
         elif self.model == 'MLP':
             hyperpars       = {'neuron_per_layer':(20,20), 'solver':'sgd'}
-            hyperpar_ranges = {'neuron_per_layer':(20,20), 'solver':'sgd'}
+            hyperpar_ranges = {
+                    'n_neurons' : range(20,40,5),
+                    'n_layers'  : range(1,3),
+                    }
 
         for hpp in hyperpars:
             if hpp not in kwargs:
@@ -82,10 +84,13 @@ class Model:
         '''
 
         hyperpar_sets = [dict(zip(self.hyperpar_ranges.keys(), v)) for v in itt.product(*self.hyperpar_ranges.values())]
+
         hyperpar_results = dict()
         for hyperpar_set in hyperpar_sets:
             for hpp in hyperpar_set:
                 setattr(self, hpp, hyperpar_set[hpp])
+            if self.model == 'MLP':
+                self.neuron_per_layer = (self.n_neurons,)*self.n_layers
             score = self.kfold_cross_val(x_train, t_train)
             hyperpar_results[score] = hyperpar_set
 
@@ -105,13 +110,25 @@ class Model:
             x_ts, t_ts = x_train[test_idx], t_train[test_idx]
             self.train(x_tr, t_tr)
             t_pred = self.predict(x_ts)
-            scores.append(metric.recall(t_ts, t_pred))
+            scores.append(metric.LL_score(t_ts, t_pred))
         return np.mean(scores)
 
 
 class Ensemble:
-    def __init__(self, model, M=10):
+    def __init__(self, model, M=10, **kwargs):
+        self.model = model
+        self.model_array = []
+
+    def bootstrap(self, x, t):
         pass
 
-    def bagging():
-        pass
+    def bagging_train(self, ):
+        self.bootstrap(x, t)
+        for i in range(M):
+            self.model_array.append(
+                    self.model.train(x, t)
+                    )
+
+    def predict(self, x):
+        for m in self.model_array:
+            m.predict(x)

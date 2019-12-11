@@ -10,7 +10,7 @@ class Metrics :
 
 
     def LL_score(self, t_pred, t_test):
-        return self.recall(t_pred, t_test)**2/sum(t_pred==1.)
+        return self.recall(t_pred, t_test)**2/(sum(t_pred==1.)/len(t_pred))
 
 
     def recall(self, t_pred, t_test):
