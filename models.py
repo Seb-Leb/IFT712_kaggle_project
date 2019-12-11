@@ -16,16 +16,13 @@ class Model:
         if self.model == 'linear':
             hyperpars       = {'C':1., 'M':5}
             hyperpar_ranges = {
-                    'C':range(1,3),
-                    'M':range(2,4),
+                    'C':range(1,5),
+                    'M':range(2,7),
                     }
         elif self.model == 'SVM':
             hyperpars       = {'C':1., 'alpha':1e-4, 'gamma':'scale', 'kernel':'rbf'}
-            hyperpar_ranges = {
-                    'C':1.,
-                    'alpha':1e-4,
-                    'gamma':'scale',
-                    }
+            hyperpar_ranges = {'C':1., 'alpha':1e-4, 'gamma':'scale', 'kernel':'rbf'}
+
             if 'kernel' in kwargs:
                 hyperpars['kernel'] = kwargs['kernel']
         elif self.model == 'MLP':
