@@ -67,7 +67,8 @@ class Model:
         hyperpar_sets = itt.product()
         hyperpar_tests = dict()
         for hyperpar_set in hyperpar_sets:
-            score = cross_val(x_val, t_val, hyperpar_set)
+
+            score = kfold_cross_val(x_val, t_val)
             hyperpar_tests[score] = hyperpar_set
 
         best_hyperpars = hyperpar_tests[max(hyperpar_tests.keys())]
