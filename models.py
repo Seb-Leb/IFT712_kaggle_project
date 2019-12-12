@@ -29,7 +29,7 @@ class Model:
             if 'kernel' in kwargs:
                 hyperpars['kernel'] = kwargs['kernel']
         elif self.model == 'MLP':
-            hyperpars       = {'neuron_per_layer':(20,20), 'solver':'sgd'}
+            hyperpars       = {'n_neurons':20, 'n_layers':2, 'solver':'sgd'}
             hyperpar_ranges = {
                     'n_neurons' : range(20,50,5),
                     'n_layers'  : range(1,5),
@@ -57,8 +57,9 @@ class Model:
 
         # Multi layer perceptron
         if self.model == 'MLP':
+            neuron_per_layer = (self.n_neurons,)*self.n_layers
             clf = MLPClassifier(
-                    hidden_layer_sizes=self.neuron_per_layer,
+                    hidden_layer_sizes=neuron_per_layer,
                     max_iter=self.max_iter,
                     )
             self.trained_model = clf.fit(x_train, t_train)
@@ -91,8 +92,6 @@ class Model:
         for hyperpar_set in hyperpar_sets:
             for hpp in hyperpar_set:
                 setattr(self, hpp, hyperpar_set[hpp])
-            if self.model == 'MLP':
-                self.neuron_per_layer = (self.n_neurons,)*self.n_layers
             score = self.kfold_cross_val(x_train, t_train)
             hyperpar_results[score] = hyperpar_set
 
@@ -129,6 +128,7 @@ class Ensemble:
         '''
         Bootstrap data samples and train an array of models.
         '''
+        self.model_array = []
         for i in range(self.M):
             x, t = resample(x, t, n_samples=2000)
             self.model_array.append(
@@ -136,9 +136,10 @@ class Ensemble:
                     )
 
     def predict(self, x):
-        T_pred = []
+        T_pred = np.zeros(len(x))
+        T_pred_bag = np.zeros(len(x))
         for m in self.model_array:
-            T_pred.append(m.predict(x))
-        if sum(T_pred)/len(T_pred) > 0.5:
-            return 1.
-        return 0.
+            T_pred_bag += m.predict(x)
+        T_pred_bag /= len(T_pred_bag)
+        T_pred[T_pred_bag>0.5] = 1
+        return T_pred
