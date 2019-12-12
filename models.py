@@ -2,6 +2,7 @@ import itertools as itt
 from sklearn import svm
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import StratifiedKFold
+from sklearn.utils import resample
 import numpy as np
 from metrics import *
 
@@ -30,8 +31,8 @@ class Model:
         elif self.model == 'MLP':
             hyperpars       = {'neuron_per_layer':(20,20), 'solver':'sgd'}
             hyperpar_ranges = {
-                    'n_neurons' : range(20,40,5),
-                    'n_layers'  : range(1,3),
+                    'n_neurons' : range(20,50,5),
+                    'n_layers'  : range(1,5),
                     }
 
         for hpp in hyperpars:
@@ -61,6 +62,7 @@ class Model:
                     max_iter=self.max_iter,
                     )
             self.trained_model = clf.fit(x_train, t_train)
+        return self.trained_model
 
     def predict(self, x):
         if self.model == 'linear':
@@ -98,7 +100,7 @@ class Model:
 
         return best_hyperpars
 
-    def kfold_cross_val(self, x_train, t_train, k=5):
+    def kfold_cross_val(self, x_train, t_train, k=3):
         '''
 
         '''
@@ -115,20 +117,28 @@ class Model:
 
 
 class Ensemble:
-    def __init__(self, model, M=10, **kwargs):
-        self.model = model
+    def __init__(self, model, hyperpars=None, M=10, **kwargs):
+        self.model = Model(model)
+        if hyperpars is not None:
+            for hpp in hyperpars:
+                setattr(self.model, hpp, hyperpars[hpp])
+        self.M = M
         self.model_array = []
 
-    def bootstrap(self, x, t):
-        pass
-
-    def bagging_train(self, ):
-        self.bootstrap(x, t)
-        for i in range(M):
+    def bagging_train(self, x, t):
+        '''
+        Bootstrap data samples and train an array of models.
+        '''
+        for i in range(self.M):
+            x, t = resample(x, t, n_samples=2000)
             self.model_array.append(
                     self.model.train(x, t)
                     )
 
     def predict(self, x):
+        T_pred = []
         for m in self.model_array:
-            m.predict(x)
+            T_pred.append(m.predict(x))
+        if sum(T_pred)/len(T_pred) > 0.5:
+            return 1.
+        return 0.
