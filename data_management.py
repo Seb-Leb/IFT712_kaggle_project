@@ -11,6 +11,7 @@ class DataManager:
         '''
         self.dataset_path = dataset_path
         self.test_size = test_size
+        self.feature_labels = ["Z", "WD", "batch_Z", "Entropy", "Ratio", "total_PSMs", "ratio_total_PSMs", "pep_ratio", "n_unique_peps"]
 
     def parse_pickle(self):
         '''

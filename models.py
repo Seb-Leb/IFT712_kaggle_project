@@ -2,6 +2,7 @@ import itertools as itt
 from sklearn import svm
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import StratifiedKFold
+from sklearn.utils import resample
 import numpy as np
 from metrics import *
 
@@ -16,18 +17,25 @@ class Model:
         if self.model == 'linear':
             hyperpars       = {'C':1., 'M':5}
             hyperpar_ranges = {
-                    'C':range(1,5),
-                    'M':range(2,7),
+                    'C':range(1,3),
+                    'M':range(2,4),
                     }
         elif self.model == 'SVM':
             hyperpars       = {'C':1., 'alpha':1e-4, 'gamma':'scale', 'kernel':'rbf'}
-            hyperpar_ranges = {'C':1., 'alpha':1e-4, 'gamma':'scale', 'kernel':'rbf'}
+
+            hyperpar_ranges = {
+                    'C':range(1,4),
+                    'gamma':1/np.logspace(np.log10(1e-9), np.log10(2), 5),
+                    }
 
             if 'kernel' in kwargs:
                 hyperpars['kernel'] = kwargs['kernel']
         elif self.model == 'MLP':
             hyperpars       = {'neuron_per_layer':(20,20), 'solver':'sgd'}
-            hyperpar_ranges = {'neuron_per_layer':(20,20), 'solver':'sgd'}
+            hyperpar_ranges = {
+                    'n_neurons' : range(20,50,5),
+                    'n_layers'  : range(1,5),
+                    }
 
         for hpp in hyperpars:
             if hpp not in kwargs:
@@ -56,6 +64,7 @@ class Model:
                     max_iter=self.max_iter,
                     )
             self.trained_model = clf.fit(x_train, t_train)
+        return self.trained_model
 
     def predict(self, x):
         if self.model == 'linear':
@@ -79,10 +88,13 @@ class Model:
         '''
 
         hyperpar_sets = [dict(zip(self.hyperpar_ranges.keys(), v)) for v in itt.product(*self.hyperpar_ranges.values())]
+
         hyperpar_results = dict()
         for hyperpar_set in hyperpar_sets:
             for hpp in hyperpar_set:
                 setattr(self, hpp, hyperpar_set[hpp])
+            if self.model == 'MLP':
+                self.neuron_per_layer = (self.n_neurons,)*self.n_layers
             score = self.kfold_cross_val(x_train, t_train)
             hyperpar_results[score] = hyperpar_set
 
@@ -90,7 +102,7 @@ class Model:
 
         return best_hyperpars
 
-    def kfold_cross_val(self, x_train, t_train, k=5):
+    def kfold_cross_val(self, x_train, t_train, k=3):
         '''
 
         '''
@@ -107,8 +119,28 @@ class Model:
 
 
 class Ensemble:
-    def __init__(self, model, M=10):
-        pass
+    def __init__(self, model, hyperpars=None, M=10, **kwargs):
+        self.model = Model(model)
+        if hyperpars is not None:
+            for hpp in hyperpars:
+                setattr(self.model, hpp, hyperpars[hpp])
+        self.M = M
+        self.model_array = []
 
-    def bagging():
-        pass
+    def bagging_train(self, x, t):
+        '''
+        Bootstrap data samples and train an array of models.
+        '''
+        for i in range(self.M):
+            x, t = resample(x, t, n_samples=2000)
+            self.model_array.append(
+                    self.model.train(x, t)
+                    )
+
+    def predict(self, x):
+        T_pred = []
+        for m in self.model_array:
+            T_pred.append(m.predict(x))
+        if sum(T_pred)/len(T_pred) > 0.5:
+            return 1.
+        return 0.
