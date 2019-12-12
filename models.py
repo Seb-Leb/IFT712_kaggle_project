@@ -22,10 +22,12 @@ class Model:
                     }
         elif self.model == 'SVM':
             hyperpars       = {'C':1., 'alpha':1e-4, 'gamma':'scale', 'kernel':'rbf'}
+
             hyperpar_ranges = {
                     'C':range(1,4),
                     'gamma':1/np.logspace(np.log10(1e-9), np.log10(2), 5),
                     }
+
             if 'kernel' in kwargs:
                 hyperpars['kernel'] = kwargs['kernel']
         elif self.model == 'MLP':
