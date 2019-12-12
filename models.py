@@ -43,7 +43,7 @@ class Model:
 
         self.hyperpar_ranges = hyperpar_ranges
 
-    def train(self, x_train, t_train):
+    def train(self, x_train, t_train, return_model=False):
         # Linear Classifier
         if self.model == 'linear':
             x_hd = self.polynomial_basis_fun(x_train)
@@ -52,8 +52,8 @@ class Model:
 
         # SVM
         if self.model == 'SVM':
-            clf = svm.SVC(C=self.C, gamma=self.gamma, kernel=self.kernel)
-            self.trained_model = clf.fit(x_train, t_train, probability=True)
+            clf = svm.SVC(C=self.C, gamma=self.gamma, kernel=self.kernel, probability=True)
+            self.trained_model = clf.fit(x_train, t_train)
 
         # Multi layer perceptron
         if self.model == 'MLP':
@@ -63,7 +63,8 @@ class Model:
                     max_iter=self.max_iter,
                     )
             self.trained_model = clf.fit(x_train, t_train)
-        return self.trained_model
+        if return_model:
+            return self
 
     def predict(self, x, proba=False):
         if self.model == 'linear':
@@ -132,16 +133,21 @@ class Ensemble:
         '''
         self.model_array = []
         for i in range(self.M):
-            x, t = resample(x, t, n_samples=2000)
+            x, t = resample(x, t, n_samples=1000)
             self.model_array.append(
-                    self.model.train(x, t)
+                    self.model.train(x, t, return_model=True)
                     )
 
-    def predict(self, x):
+    def predict(self, x, proba=False):
         T_pred = np.zeros(len(x))
         T_pred_bag = np.zeros(len(x))
         for m in self.model_array:
+            if proba:
+                T_pred_bag += m.predict(x, proba=True)
+                continue
             T_pred_bag += m.predict(x)
-        T_pred_bag /= len(T_pred_bag)
+        T_pred_bag /= len(self.model_array)
+        if proba:
+            return T_pred_bag
         T_pred[T_pred_bag>0.5] = 1
         return T_pred
