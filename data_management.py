@@ -20,6 +20,7 @@ class DataManager:
         out: list of dicts containing the data
         '''
         P, U = pickle.load(open(self.dataset_path, 'rb'))
+        self.feature_labels = ["Z", "WD", "batch_Z", "Entropy", "Ratio", "total_PSMs", "ratio_total_PSMs", "pep_ratio", "n_unique_peps"]
         P_names = [p[0] for p in P]
         U_names = [u[0] for u in U]
         P = np.array([p[-1] for p in P])
