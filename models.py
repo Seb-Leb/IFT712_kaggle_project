@@ -22,12 +22,10 @@ class Model:
                     }
         elif self.model == 'SVM':
             hyperpars       = {'C':1., 'alpha':1e-4, 'gamma':'scale', 'kernel':'rbf'}
-
             hyperpar_ranges = {
                     'C':range(1,4),
                     'gamma':1/np.logspace(np.log10(1e-9), np.log10(2), 5),
                     }
-
             if 'kernel' in kwargs:
                 hyperpars['kernel'] = kwargs['kernel']
         elif self.model == 'MLP':
@@ -55,7 +53,7 @@ class Model:
         # SVM
         if self.model == 'SVM':
             clf = svm.SVC(C=self.C, gamma=self.gamma, kernel=self.kernel)
-            self.trained_model = clf.fit(x_train, t_train)
+            self.trained_model = clf.fit(x_train, t_train, probability=True)
 
         # Multi layer perceptron
         if self.model == 'MLP':
@@ -67,9 +65,11 @@ class Model:
             self.trained_model = clf.fit(x_train, t_train)
         return self.trained_model
 
-    def predict(self, x):
+    def predict(self, x, proba=False):
         if self.model == 'linear':
             x = self.polynomial_basis_fun(x)
+        if proba:
+            return self.trained_model.predict_proba(x)[:,1]
         return self.trained_model.predict(x)
 
     def polynomial_basis_fun(self, X):

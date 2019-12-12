@@ -17,7 +17,7 @@ class FigureDrawer:
         plt.tight_layout()
         plt.show()
 
-    def draw_line_plot(self, x, y, x_lab, y_lab):
+    def draw_line_plot(self, lines, colors, x_lab, y_lab):
         fig = plt.subplots(figsize=self.figsize)
         plt.title(self.title)
         plt.plot(x, y)
