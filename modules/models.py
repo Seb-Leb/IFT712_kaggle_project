@@ -5,7 +5,7 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.utils import resample
 import numpy as np
 import pickle
-from metrics import *
+from modules.metrics import *
 
 class Model:
     def __init__(self, model_type, max_iter=1000, **kwargs):
@@ -85,7 +85,7 @@ class Model:
         return phi_X
 
 
-    def hyperpar_tuning(self, x_train, t_train, search_method='grid'):
+    def hyperpar_tuning(self, x_train, t_train):
         '''
         Hyper parameter search with k-fold cross validation.
         '''
@@ -148,6 +148,19 @@ class Ensemble:
             self.model_array.append(
                     self.model.train(x, t, return_model=True)
                     )
+
+    def bagging_cross_val(self, x_train, t_train, k=10):
+        metric = Metrics()
+        skf  = StratifiedKFold(n_splits=k)
+        scores = []
+        for train_idx, test_idx in skf.split(x_train, t_train):
+            x_tr, t_tr = x_train[train_idx], t_train[train_idx]
+            x_ts, t_ts = x_train[test_idx], t_train[test_idx]
+            self.bagging_train(x_tr, t_tr)
+            t_pred = self.predict(x_ts)
+            scores.append(metric.LL_score(t_ts, t_pred))
+        return scores
+
 
     def predict(self, x, proba=False):
         T_pred = np.zeros(len(x))
