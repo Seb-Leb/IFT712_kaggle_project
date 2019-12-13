@@ -44,10 +44,12 @@ class FigureDrawer:
         plt.tight_layout()
         plt.show()
 
-    def draw_box_plots(self, data):
+    def draw_box_plots(self, data, labels, y_lab):
         fig, ax = plt.subplots()
         ax.boxplot(data)
+        ax.set_xticklabels(labels)
         plt.title(self.title)
+        plt.ylabel(y_lab)
         plt.show()
 
 
