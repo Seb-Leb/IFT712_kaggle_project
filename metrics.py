@@ -21,12 +21,12 @@ class Metrics :
         return sum(t_pred[t_pred==t_test]==1.)/sum(t_test==1.)
 
 
-    def rc_ll_curve(self, t_pred_proba, t_test):
+    def rc_ll_curve(self, t_pred_proba, t_test, n_points=50):
         '''
 
         '''
         rc, ll = [], []
-        for threshold in np.linspace(0., 1., 50):
+        for threshold in np.linspace(0., 1., n_points):
             tp   = np.zeros(len(t_pred_proba))
             tp[t_pred_proba > threshold] = 1.
             rc.append(self.recall(tp, t_test))
