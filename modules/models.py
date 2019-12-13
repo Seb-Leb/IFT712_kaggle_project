@@ -35,6 +35,13 @@ class Model:
                     'n_neurons' : range(20,50,5),
                     'n_layers'  : range(1,5),
                     }
+        elif self.model == 'rfm':            
+            hyperpars       = {'N':1., 'M':5}
+            hyperpar_ranges  = {
+                    'N':range(1,3),
+                    'M':range(2,4),
+                    }
+            
 
         for hpp in hyperpars:
             if hpp not in kwargs:
@@ -56,6 +63,13 @@ class Model:
             clf = svm.SVC(C=self.C, gamma=self.gamma, kernel=self.kernel, probability=True)
             self.trained_model = clf.fit(x_train, t_train)
 
+        # Random forest
+        if self.model == 'rfm':
+            clf = RandomForestClassifier(n_estimators=70, oob_score=True, 
+                                         n_jobs=-1, random_state=101 , max_features=None,
+                                         min_samples_leaf=30)
+            self.trained_model = clf.fit(x_train, t_train)
+            
         # Multi layer perceptron
         if self.model == 'MLP':
             neuron_per_layer = (self.n_neurons,)*self.n_layers
@@ -64,8 +78,10 @@ class Model:
                     max_iter=self.max_iter,
                     )
             self.trained_model = clf.fit(x_train, t_train)
+            
         if return_model:
             return self
+        
 
     def predict(self, x, proba=False):
         if self.model == 'linear':
