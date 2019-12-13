@@ -5,7 +5,7 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.utils import resample
 import numpy as np
 import pickle
-from metrics import *
+from modules.metrics import *
 
 class Model:
     def __init__(self, model_type, max_iter=1000, **kwargs):
