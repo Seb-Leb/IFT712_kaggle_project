@@ -1,3 +1,8 @@
+#####
+# Jeremie Beliveau-Lefebvre (04494470)
+# Sebastien Leblanc         (18206273)
+###
+
 import itertools as itt
 from sklearn import svm
 from sklearn.neural_network import MLPClassifier

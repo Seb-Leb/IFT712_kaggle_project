@@ -1,3 +1,8 @@
+#####
+# Jeremie Beliveau-Lefebvre (04494470)
+# Sebastien Leblanc         (18206273)
+###
+
 import numpy as np
 from matplotlib import pyplot as plt
 

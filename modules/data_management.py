@@ -1,3 +1,8 @@
+#####
+# Jeremie Beliveau-Lefebvre (04494470)
+# Sebastien Leblanc         (18206273)
+###
+
 import pickle
 import numpy as np
 from sklearn.model_selection import train_test_split
