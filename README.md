@@ -1,4 +1,4 @@
-# IFT712_kaggle_project - Fall 2019
+﻿# IFT712_kaggle_project - Fall 2019
 # Jérémie Béliveau-Lefebvre 04494470
 # Sebastien Leblanc 18206273
 # Team repo for Usherbrooke IFT712 term project - Fall 2019
@@ -34,17 +34,6 @@ Main :
          - analyse
          - store analysis
 
- - show analysis results of the array (6 methods)
-
-
-Initial parameters and reason of use :
- none for now
-
-Data gathering : 
-- do we join a file and read data from it
-- or do we import them directly from kaggle.com #is kaggle api needed?
-
-Show analysis :
- - do model combination to find the best result
+ - show analysis results of the array (6 methods) with a cross-validation
 
 
